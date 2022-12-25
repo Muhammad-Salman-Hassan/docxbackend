@@ -2,17 +2,26 @@ const express = require("express");
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../models");
 const User = require("../models/User")(sequelize, DataTypes);
+
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const auth = require("../middleware/auth");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-
+const randtoken = require("rand-token");
+const sendEmail = require("../services/sendEmail");
+const crypto = require("crypto");
 const privatekey =
   "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX";
 
 router.post("/register", async (req, res) => {
   const user = req.body;
+  
+  let Existuser = await User.findOne({where:{email:user.email}});
+  if (Existuser) {
+    throw new Error("Email already exist");
+  }
+
   await User.create(user);
   res.json(user);
 });
@@ -27,7 +36,7 @@ router.post("/login", async (req, res) => {
   });
 
   if (!user) {
-    return res.json({error:"Invalid Credentials"}).status(401);
+    return res.json({ error: "Invalid Credentials" }).status(401);
   }
 
   bcrypt.compare(password, user.password).then((match) => {
@@ -46,6 +55,26 @@ router.post("/login", async (req, res) => {
 
     res.status(200).json({ cnic, accessToken });
   });
+});
+
+//////////Reset Password Routes
+
+router.post("/forgetpassword", async (req, res) => {
+  const email = req.body.email;
+  const verifiedEmail = await User.findOne({ where: { email: email } });
+  if (!verifiedEmail) {
+    return res.json({ error: "Email Not Found In Our DataBase REcord" });
+  }
+  const userDetail = await User.findOne({ where: { email: email } });
+  let resetToken = crypto.randomBytes(32).toString("hex");
+  let bcryptSalt="10"
+  const hash = await bcrypt.hash(resetToken, Number(bcryptSalt));
+  if(userDetail.tokens){
+    userDetail.tokens=hash
+  }
+  // let token = randtoken.generate(20);
+  // const sent = sendEmail(email, token);
+  res.json(userDetail)
 });
 
 router.get("/dashboard", auth, async (req, res) => {
@@ -69,4 +98,5 @@ router.get("/dashboard", auth, async (req, res) => {
   });
   res.json({ message: "You are authorized to access me", singleuser });
 });
+
 module.exports = router;

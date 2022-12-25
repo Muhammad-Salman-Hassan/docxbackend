@@ -24,7 +24,6 @@ app.use(express.json())
 
 app.use('/',routes)
 
-
   
 
 db.sequelize.sync().then(()=>{
