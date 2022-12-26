@@ -1,5 +1,5 @@
 const nodemailer=require("nodemailer")
-function sendEmail(email, token) {
+function sendEmail(email, token,link) {
     var email = email;
     var token = token;
  
@@ -15,7 +15,7 @@ function sendEmail(email, token) {
         from: 'nicesnippets@gmail.com',
         to: email,
         subject: 'Reset Password Link - nicesnippets.com',
-        html: 'You requested for reset password, kindly use this link to reset your password'
+        html: `You requested for reset password, kindly use this ${link} to reset your password`
     };
  
     mail.sendMail(mailOptions, function(error, info) {
