@@ -58,24 +58,62 @@ router.post("/login", async (req, res) => {
 });
 
 //////////Reset Password Routes
-
+let verifiedEmail
 router.post("/forgetpassword", async (req, res) => {
-  const email = req.body.email;
-  const verifiedEmail = await User.findOne({ where: { email: email } });
+  const useremail = req.body.email;
+  verifiedEmail = await User.findOne({ where: { email: useremail } });
+  // console.log(verifiedEmail)
   if (!verifiedEmail) {
     return res.json({ error: "Email Not Found In Our DataBase REcord" });
   }
-  const userDetail = await User.findOne({ where: { email: email } });
-  let resetToken = crypto.randomBytes(32).toString("hex");
-  let bcryptSalt="10"
-  const hash = await bcrypt.hash(resetToken, Number(bcryptSalt));
-  if(userDetail.tokens){
-    userDetail.tokens=hash
+  const {id,password,email} = verifiedEmail
+  const payload={
+    id,
+    email
+
   }
-  // let token = randtoken.generate(20);
-  // const sent = sendEmail(email, token);
-  res.json(userDetail)
+ 
+ const secret=privatekey+password
+
+ const token=jwt.sign(payload,secret,{expiresIn:"15m"})
+
+ const link=`http://localhost:3001/reset-password/${id}/${token}`
+ console.log(link)
+// console.log(verifiedEmail)
 });
+
+router.get("/reset-password/:id/:token",async(req,res,next)=>{
+  const {id,token}=req.params
+
+  const {password,email} = verifiedEmail
+  
+  const secret=privatekey+password
+
+  try {
+    const payload=jwt.verify(token,secret)
+    res.send({email})
+  } catch (error) {
+    console.log(error)
+  }
+})
+
+router.post("/reset-password/:id/:token",async(req,res,next)=>{
+  const {id,token}=req.params
+const {userpassword,confirmPassword}=req.body
+const user = await User.findOne({ where: { id: id } });
+  
+  const secret=privatekey+user.password
+
+  try {
+    const payload=jwt.verify(token,secret)
+    user.password=userpassword
+    res.send("password change succesfully")
+    
+  } catch (error) {
+    console.log(error)
+  }
+})
+
 
 router.get("/dashboard", auth, async (req, res) => {
   const token = await req.cookies.accessToken;

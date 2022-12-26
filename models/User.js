@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     if (user.password || user.tokens) {
       const salt = await bcrypt.genSaltSync(10, "a");
       user.password = bcrypt.hashSync(user.password, salt);
-       user.tokens = JWT.sign({ id: user.id }, "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX")
+      //  user.tokens = JWT.sign({ id: user.id }, "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX")
     }
   });
 
