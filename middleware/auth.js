@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 module.exports = async (request, response, next) => {
   try {
@@ -8,10 +9,10 @@ module.exports = async (request, response, next) => {
 
     //check if the token matches the supposed origin
     const decodedToken = await jwt.verify(token, "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX");
-
+    
     // retrieve the user details of the logged in user
     const user = await decodedToken;
-
+    const userroot=await User.findOne({where:{cnic:user.cnic}})
     // pass the user down to the endpoints here
     request.cnic = user;
 

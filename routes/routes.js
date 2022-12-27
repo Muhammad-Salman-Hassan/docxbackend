@@ -48,11 +48,13 @@ router.post("/login", async (req, res) => {
       expiresIn: "1H",
     });
 
+
     res.cookie("accessToken", accessToken, {
       httpOnly: true, //for development
       // secure: process.env.NODE_ENV === "production", for Production
+      expires:new Date(Date.now()+2500000)
     });
-
+    // res.setHeader('accessToken', accessToken);
     res.status(200).json({ cnic, accessToken });
   });
 });
@@ -117,7 +119,12 @@ const user = await User.findOne({ where: { id: id } });
 
 
 router.get("/dashboard", auth, async (req, res) => {
-  const token = await req.cookies.accessToken;
+  // const token = await req.cookies.accessToken
+  // const bearerHeader=req.headers['authorization']
+  //   const bearer=bearerHeader.split(' ')
+  //   const token = bearer[1]
+  // console.log(token)
+  
   const decodedToken = await jwt.verify(
     token,
     "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX"
@@ -135,6 +142,7 @@ router.get("/dashboard", auth, async (req, res) => {
       id: cnic.id,
     },
   });
+  console.log(singleuser)
   res.json({ message: "You are authorized to access me", singleuser });
 });
 
