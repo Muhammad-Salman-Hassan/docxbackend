@@ -119,22 +119,8 @@ const user = await User.findOne({ where: { id: id } });
 
 
 router.get("/dashboard", auth, async (req, res) => {
-  // const token = await req.cookies.accessToken
-  // const bearerHeader=req.headers['authorization']
-  //   const bearer=bearerHeader.split(' ')
-  //   const token = bearer[1]
-  // console.log(token)
   
-  const decodedToken = await jwt.verify(
-    token,
-    "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX"
-  );
-
-  // retrieve the user details of the logged in user
-  const user = await decodedToken;
-
-  // pass the user down to the endpoints here
-  let cnic = (req.id = user);
+  let cnic = (req.id = req.user);
   console.log(cnic);
 
   const singleuser = await User.findOne({
@@ -142,8 +128,8 @@ router.get("/dashboard", auth, async (req, res) => {
       id: cnic.id,
     },
   });
-  console.log(singleuser)
-  res.json({ message: "You are authorized to access me", singleuser });
+  
+  res.json({Message:"Verified",singleuser})
 });
 
 module.exports = router;
