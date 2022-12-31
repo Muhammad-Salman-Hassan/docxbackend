@@ -1,7 +1,7 @@
 const express = require("express");
 const { DataTypes } = require("sequelize");
-const { sequelize } = require("../models");
-const User = require("../models/User")(sequelize, DataTypes);
+const { sequelize} = require("../models");
+// const User = require("../models/User")(sequelize, DataTypes);
 
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -11,6 +11,9 @@ const jwt = require("jsonwebtoken");
 const randtoken = require("rand-token");
 const sendEmail = require("../services/sendEmail");
 const crypto = require("crypto");
+const db = require("../models");
+const User=db.user
+const Profile=db.userProfile
 const privatekey =
   "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX";
 
@@ -130,6 +133,13 @@ router.get("/dashboard", auth, async (req, res) => {
   });
   
   res.json({Message:"Verified",singleuser})
+});
+
+router.get("/profile", async (req, res) => {
+  
+  const users = await User.findAll({ include: Profile});
+  
+  res.json(users)
 });
 
 module.exports = router;

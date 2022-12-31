@@ -1,5 +1,5 @@
 'use strict';
-
+const { DataTypes} = require('sequelize');
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
@@ -34,5 +34,19 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+
+db.user=require('./User')(sequelize,DataTypes)
+db.userProfile=require('./ProfileModel')(sequelize,DataTypes)
+
+
+db.user.hasOne(db.userProfile,{
+  foreignKey: 'user_id',
+})
+
+db.userProfile.belongsTo(db.user, {
+  foreignKey: 'user_id',
+  as: 'userprofile'
+})
 
 module.exports = db;
