@@ -1,18 +1,17 @@
 const fs = require("fs");
 const db = require("../models");
 
-const Profile=db.userProfile
+const Profile = db.userProfile;
 
 const uploadFiles = async (req, res) => {
-    let rollno=req.body.rollno
-    let fathername=req.body.fathername
-    let fullname=req.body.fullname
-    let department=req.body.department
-    let passingyear=req.body.passingyear
-    let enrolmentno=req.body.enrolmentno
-    let libraryid=req.body.libraryid
-    let profilepic=req.file
-
+  let rollno = req.body.rollno;
+  let fathername = req.body.fathername;
+  let fullname = req.body.fullname;
+  let department = req.body.department;
+  let passingyear = req.body.passingyear;
+  let enrolmentno = req.body.enrolmentno;
+  let libraryid = req.body.libraryid;
+  let profilepic = req.file;
 
   try {
     console.log(profilepic);
@@ -21,29 +20,21 @@ const uploadFiles = async (req, res) => {
       return res.send(`You must select a file.`);
     }
 
-    let obj={
-        fullname,
-        department,
-        passingyear,
-        enrolmentno,
-        libraryid,
-        profilepic:fs.readFileSync(
-            __basedir + "/resources/static/assets/uploads/" + req.file.filename
-          ),
-    }
-    Image.create({
-      type: req.file.mimetype,
-      name: req.file.originalname,
-      data: fs.readFileSync(
-        __basedir + "/resources/static/assets/uploads/" + req.file.filename
-      ),
-    }).then((image) => {
-      fs.writeFileSync(
-        __basedir + "/resources/static/assets/tmp/" + image.name,
-        image.data
-      );
-
-      return res.send(`File has been uploaded.`);
+    let fileread = fs.readFileSync(
+      __basedir + "/resources/static/assets/uploads/" + req.file.filename
+    );
+    let obj = {
+      fullname,
+      fathername,
+      rollno,
+      department,
+      passingyear,
+      enrolmentno,
+      libraryid,
+      profilepic: fileread,
+    };
+    Profile.create(obj).then((response) => {
+      return res.send(`Profile Created SuccesFully.`);
     });
   } catch (error) {
     console.log(error);
