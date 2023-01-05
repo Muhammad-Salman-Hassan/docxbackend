@@ -90,7 +90,7 @@ sendEmail(email,token,link)
 
 router.get("/reset-password/:id/:token",async(req,res,next)=>{
   const {id,token}=req.params
-
+  let verifiedEmail = await User.findOne({ where: { id: id } });
   const {password,email} = verifiedEmail
   
   const secret=privatekey+password
