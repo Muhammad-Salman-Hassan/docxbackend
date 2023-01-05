@@ -17,12 +17,14 @@ const corsOptions ={
 app.use(cors(corsOptions))
 // ?????Router????????????
 const routes=require("./routes/routes")
+const profile=require('./routes/profile')
 
 app.use(express.json())
 
 
 
 app.use('/',routes)
+app.use('/dashboard',profile)
 
   
 

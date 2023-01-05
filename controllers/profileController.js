@@ -3,7 +3,7 @@ const db = require("../models");
 
 const Profile = db.userProfile;
 
-const uploadFiles = async (req, res) => {
+const profileController = async (req, res) => {
   let rollno = req.body.rollno;
   let fathername = req.body.fathername;
   let fullname = req.body.fullname;
@@ -21,7 +21,7 @@ const uploadFiles = async (req, res) => {
     }
 
     let fileread = fs.readFileSync(
-      __basedir + "/resources/static/assets/uploads/" + req.file.filename
+      __basedir + "/resources/static/assets/uploads/" + profilepic.filename
     );
     let obj = {
       fullname,
@@ -31,7 +31,7 @@ const uploadFiles = async (req, res) => {
       passingyear,
       enrolmentno,
       libraryid,
-      profilepic: fileread,
+       fileread,
     };
     Profile.create(obj).then((response) => {
       return res.send(`Profile Created SuccesFully.`);
@@ -43,5 +43,5 @@ const uploadFiles = async (req, res) => {
 };
 
 module.exports = {
-  uploadFiles,
+  profileController,
 };
