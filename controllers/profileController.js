@@ -1,10 +1,8 @@
 const fs = require("fs");
 const db = require("../models");
-var multer  = require('multer');
+var multer = require("multer");
 const path = require("path");
 const Profile = db.userProfile;
-
-
 
 const profileController = async (req, res) => {
   let rollno = req.body.rollno;
@@ -17,23 +15,23 @@ const profileController = async (req, res) => {
   let profilepic = req.files;
   global.__basedir = __dirname;
   try {
-   
-    let [filename]=profilepic
-    console.log(__dirname);
+    let [filename] = profilepic;
+    // console.log(__dirname);
     if (profilepic == undefined) {
       return res.send(`You must select a file.`);
     }
-    
-    
-    let fileread = fs.readFileSync(
-       "docxbackend/uploads/"+filename.filename
-    );
+
+    let fileread = fs.readFileSync("docxbackend/uploads/" + filename.filename);
     // let write=fs.writeFileSync(
     //   "docxbackend/uploads/"+filename.name,
     //   fileread.data
     // );
 
-    // console.log(write)
+    // console.log(write) location+url+filename
+
+    const host = req.hostname;
+    const filePath = req.protocol + "://" + host + "/" + filename.destination+"/"+filename.filename;
+    console.log(filePath);
     let obj = {
       fullname,
       fathername,
@@ -42,7 +40,10 @@ const profileController = async (req, res) => {
       passingyear,
       enrolmentno,
       libraryid,
-      profilepic:fileread,
+      profilepic: fileread,
+      imgname:filename.filename,
+      imgdestination:filename.destination,
+      imgurl:filePath
     };
     Profile.create(obj).then((response) => {
       return res.send(`Profile Created SuccesFully.`);

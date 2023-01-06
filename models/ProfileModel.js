@@ -38,6 +38,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BLOB("long"),
         allowNull: true,
       },
+      imgname: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      imgdestination: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      imgurl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     
   );
