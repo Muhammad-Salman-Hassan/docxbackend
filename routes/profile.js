@@ -13,7 +13,7 @@ const imageFilter = (req, file, cb) => {
 };
 
 var storage = multer.diskStorage({
-  destination: "docxbackend/uploads",
+  destination: "uploads",
   filename: (req, file, cb) => {
     cb(null, `verification-${Date.now()}.${file.mimetype.split("/")[1]}`);
     console.log(file.mimetype);

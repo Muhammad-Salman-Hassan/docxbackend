@@ -13,7 +13,7 @@ const corsOptions ={
    credentials:true,            //access-control-allow-credentials:true
    optionSuccessStatus:200,
 }
-
+app.use('/uploads',express.static('uploads'))
 app.use(cors(corsOptions))
 // ?????Router????????????
 const routes=require("./routes/routes")

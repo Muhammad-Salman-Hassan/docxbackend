@@ -3,6 +3,7 @@ const db = require("../models");
 var multer = require("multer");
 const path = require("path");
 const Profile = db.userProfile;
+let port=3001
 
 const profileController = async (req, res) => {
   let rollno = req.body.rollno;
@@ -21,7 +22,7 @@ const profileController = async (req, res) => {
       return res.send(`You must select a file.`);
     }
 
-    let fileread = fs.readFileSync("docxbackend/uploads/" + filename.filename);
+    let fileread = fs.readFileSync("uploads/" + filename.filename);
     // let write=fs.writeFileSync(
     //   "docxbackend/uploads/"+filename.name,
     //   fileread.data
@@ -30,7 +31,7 @@ const profileController = async (req, res) => {
     // console.log(write) location+url+filename
 
     const host = req.hostname;
-    const filePath = req.protocol + "://" + host + "/" + filename.destination+"/"+filename.filename;
+    const filePath = req.protocol + "://" + host+":"+port + "/" + filename.destination+"/"+filename.filename;
     console.log(filePath);
     let obj = {
       fullname,
