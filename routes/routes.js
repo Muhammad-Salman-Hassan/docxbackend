@@ -62,6 +62,12 @@ router.post("/login", async (req, res) => {
   });
 });
 
+router.get('/logout', async(req, res) => {
+  
+  res.clearCookie("accessToken");
+  res.json({msg:"Logout"})
+})
+
 //////////Reset Password Routes
 // let verifiedEmail
 router.post("/forgetpassword", async (req, res) => {
@@ -135,11 +141,11 @@ router.get("/dashboard", auth, async (req, res) => {
   res.json({Message:"Verified",singleuser})
 });
 
-router.get("/profile", async (req, res) => {
+// router.get("/profile", async (req, res) => {
   
-  const users = await User.findAll({ include: Profile});
+//   const users = await User.findAll({ include: Profile});
   
-  res.json(users)
-});
+//   res.json(users)
+// });
 
 module.exports = router;

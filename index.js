@@ -24,7 +24,7 @@ app.use(express.json())
 
 
 app.use('/',routes)
-app.use('/dashboard',profile)
+app.use('/',profile)
 
   
 

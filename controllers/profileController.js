@@ -13,6 +13,7 @@ const profileController = async (req, res) => {
   let passingyear = req.body.passingyear;
   let enrolmentno = req.body.enrolmentno;
   let libraryid = req.body.libraryid;
+  let phone= req.body.phone;
   let profilepic = req.files;
   global.__basedir = __dirname;
   try {
@@ -41,6 +42,7 @@ const profileController = async (req, res) => {
       passingyear,
       enrolmentno,
       libraryid,
+      phone,
       profilepic: fileread,
       imgname:filename.filename,
       imgdestination:filename.destination,
