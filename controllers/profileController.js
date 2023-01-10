@@ -2,10 +2,14 @@ const fs = require("fs");
 const db = require("../models");
 var multer = require("multer");
 const path = require("path");
+const jwt = require("jsonwebtoken");
 const Profile = db.userProfile;
 let port=3001
 
 const profileController = async (req, res) => {
+  
+ 
+
   let rollno = req.body.rollno;
   let fathername = req.body.fathername;
   let fullname = req.body.fullname;
@@ -15,10 +19,13 @@ const profileController = async (req, res) => {
   let libraryid = req.body.libraryid;
   let phone= req.body.phone;
   let profilepic = req.files;
+  let obj_id=(req.id = req.user)
+  let user_id=obj_id.id
+  console.log(profilepic,user_id)
   global.__basedir = __dirname;
   try {
     let [filename] = profilepic;
-    // console.log(__dirname);
+  
     if (profilepic == undefined) {
       return res.send(`You must select a file.`);
     }
@@ -33,7 +40,7 @@ const profileController = async (req, res) => {
 
     const host = req.hostname;
     const filePath = req.protocol + "://" + host+":"+port + "/" + filename.destination+"/"+filename.filename;
-    console.log(filePath);
+   
     let obj = {
       fullname,
       fathername,
@@ -46,6 +53,7 @@ const profileController = async (req, res) => {
       profilepic: fileread,
       imgname:filename.filename,
       imgdestination:filename.destination,
+      user_id,
       imgurl:filePath
     };
     Profile.create(obj).then((response) => {
@@ -53,7 +61,7 @@ const profileController = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.send(`Error when trying upload images: ${error}`);
+    return res.json({msg:"Error when trying to complete your Profile",error});
   }
 };
 

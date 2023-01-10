@@ -141,11 +141,13 @@ router.get("/dashboard", auth, async (req, res) => {
   res.json({Message:"Verified",singleuser})
 });
 
-// router.get("/profile", async (req, res) => {
+router.get("/userprofile", auth,async (req, res) => {
+  let cnic = (req.id = req.user);
+  console.log(cnic);
   
-//   const users = await User.findAll({ include: Profile});
+  const users = await User.findOne({ include: Profile,where:{id:cnic.id}});
   
-//   res.json(users)
-// });
+  res.json(users)
+});
 
 module.exports = router;
