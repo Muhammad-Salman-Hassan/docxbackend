@@ -77,12 +77,13 @@ router.post("/forgetpassword", async (req, res) => {
   if (!verifiedEmail) {
     return res.json({ error: "Email Not Found In Our DataBase REcord" });
   }
-  const {id,password,email} = verifiedEmail
+  const {id,password,email,name} = verifiedEmail
   const payload={
     id,
     email
 
   }
+  console.log(verifiedEmail)
  
  const secret=privatekey+password
 
@@ -91,7 +92,7 @@ router.post("/forgetpassword", async (req, res) => {
  const link=`http://localhost:3001/reset-password/${id}/${token}`
  console.log(link)
 // console.log(verifiedEmail)
-sendEmail(email,token,link)
+sendEmail(email,token,link,name)
 });
 
 router.get("/reset-password/:id/:token",async(req,res,next)=>{
