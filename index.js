@@ -5,7 +5,6 @@ const app = express()
 const port = 3001
 const db=require("./models/index")
 
-app.use(cookieParser());
 
 const cors=require("cors");
 const corsOptions ={
@@ -18,8 +17,10 @@ app.use(cors(corsOptions))
 // ?????Router????????????
 const routes=require("./routes/routes")
 const profile=require('./routes/profile')
-
+app.use(cookieParser());
 app.use(express.json())
+app.use(express.urlencoded())
+
 
 
 

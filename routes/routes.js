@@ -12,9 +12,10 @@ const randtoken = require("rand-token");
 const sendEmail = require("../services/sendEmail");
 const crypto = require("crypto");
 const db = require("../models");
+const { json } = require("body-parser");
 const User=db.user
 const Profile=db.userProfile
-const privatekey =
+var privatekey =
   "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX";
 
 router.post("/register", async (req, res) => {
@@ -55,7 +56,7 @@ router.post("/login", async (req, res) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true, //for development
       // secure: process.env.NODE_ENV === "production", for Production
-      expires:new Date(Date.now()+2500000)
+      expires:0
     });
     // res.setHeader('accessToken', accessToken);
     res.status(200).json({ cnic, accessToken });
@@ -72,12 +73,13 @@ router.get('/logout', async(req, res) => {
 // let verifiedEmail
 router.post("/forgetpassword", async (req, res) => {
   const useremail = req.body.email;
+  console.log(useremail)
  let verifiedEmail = await User.findOne({ where: { email: useremail } });
   // console.log(verifiedEmail)
   if (!verifiedEmail) {
-    return res.json({ error: "Email Not Found In Our DataBase REcord" });
+    return res.json({ error: "Email Not Found In Our DataBase Record" ,code:401});
   }
-  const {id,password,email,name} = verifiedEmail
+  const {id,password,email,name} = verifiedEmail 
   const payload={
     id,
     email
@@ -90,9 +92,10 @@ router.post("/forgetpassword", async (req, res) => {
  const token=jwt.sign(payload,secret,{expiresIn:"15m"})
 
  const link=`http://localhost:3001/reset-password/${id}/${token}`
- console.log(link)
+ console.log(token)
 // console.log(verifiedEmail)
 sendEmail(email,token,link,name)
+res.json({msg:"We have Sent You Email Please Check It Out!",code:200}).status(200)
 });
 
 router.get("/reset-password/:id/:token",async(req,res,next)=>{
