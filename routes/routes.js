@@ -15,6 +15,7 @@ const db = require("../models");
 const { json } = require("body-parser");
 const User=db.user
 const Profile=db.userProfile
+
 var privatekey =
   "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX";
 
@@ -49,24 +50,26 @@ router.post("/login", async (req, res) => {
     }
 
     const accessToken = sign({ usercnic: user.cnic, id: user.id }, privatekey, {
-      expiresIn: "1H",
+      expiresIn: "1d",
     });
 
 
     res.cookie("accessToken", accessToken, {
-      httpOnly: true, //for development
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
       // secure: process.env.NODE_ENV === "production", for Production
-      expires:0
+      maxAge: 2 * 60 * 60 * 1000
     });
     // res.setHeader('accessToken', accessToken);
-    res.status(200).json({ cnic, accessToken });
+    res.status(200).json({ cnic, accessToken ,isAuth:true});
   });
 });
 
 router.get('/logout', async(req, res) => {
   
   res.clearCookie("accessToken");
-  res.json({msg:"Logout"})
+  res.json({msg:"Logout",isAuth:false})
 })
 
 //////////Reset Password Routes
@@ -82,7 +85,8 @@ router.post("/forgetpassword", async (req, res) => {
   const {id,password,email,name} = verifiedEmail 
   const payload={
     id,
-    email
+    email,
+   
 
   }
   console.log(verifiedEmail)
@@ -91,7 +95,7 @@ router.post("/forgetpassword", async (req, res) => {
 
  const token=jwt.sign(payload,secret,{expiresIn:"15m"})
 
- const link=`http://localhost:3001/reset-password/${id}/${token}`
+ const link=`http://localhost:3000/reset-password/${id}/${token}`
  console.log(token)
 // console.log(verifiedEmail)
 sendEmail(email,token,link,name)
@@ -100,14 +104,15 @@ res.json({msg:"We have Sent You Email Please Check It Out!",code:200}).status(20
 
 router.get("/reset-password/:id/:token",async(req,res,next)=>{
   const {id,token}=req.params
+  console.log(token)
   let verifiedEmail = await User.findOne({ where: { id: id } });
-  const {password,email} = verifiedEmail
+  const {password,email, name} = verifiedEmail
   
   const secret=privatekey+password
 
   try {
     const payload=jwt.verify(token,secret)
-    res.send({email})
+    res.send({email, name})
   } catch (error) {
     console.log(error)
   }
@@ -137,6 +142,7 @@ router.get("/dashboard", auth, async (req, res) => {
   console.log(cnic);
 
   const singleuser = await User.findOne({
+    include: Profile,
     where: {
       id: cnic.id,
     },
@@ -146,6 +152,7 @@ router.get("/dashboard", auth, async (req, res) => {
 });
 
 router.get("/userprofile", auth,async (req, res) => {
+ 
   let cnic = (req.id = req.user);
   console.log(cnic);
   

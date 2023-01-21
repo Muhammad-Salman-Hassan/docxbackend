@@ -1,16 +1,17 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+
 module.exports = async (request, response, next) => {
   try {
     //   get the token from the authorization header
-    const bearertoken = await request.headers["authorization"]
-    const bearer=bearertoken.split(" ")
-    const token=bearer[1]
+    // const bearertoken = await request.headers["authorization"]
+    // const bearer=bearertoken.split(" ")
+    const token=request.cookies.accessToken
 
     request.token=token
 
-    // console.log(token)
+    console.log(token)
 
     //check if the token matches the supposed origin
     const decodedToken = await jwt.verify(token, "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX");
