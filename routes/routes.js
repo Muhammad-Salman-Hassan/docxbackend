@@ -1,7 +1,6 @@
 const express = require("express");
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../models");
-// const User = require("../models/User")(sequelize, DataTypes);
 
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -21,7 +20,7 @@ var privatekey = "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX";
 router.post("/register", async (req, res) => {
   const user = req.body;
 
-  let Existuser = await User.findOne({ where: { email: user.email } });
+  let Existuser = await User.findOne({ where: { email: user.email },exclude: ['password'] });
   if (Existuser) {
     throw new Error("Email already exist");
   }
@@ -59,8 +58,8 @@ router.post("/login", async (req, res) => {
       // secure: process.env.NODE_ENV === "production", for Production
       maxAge: 2 * 60 * 60 * 1000,
     });
-    // res.setHeader('accessToken', accessToken);
-    res.status(200).json({ cnic, accessToken, isAuth: true });
+
+    res.status(200).json({ cnic, accessToken, isAuth: true, role:user.role,user });
   });
 });
 
@@ -70,7 +69,7 @@ router.get("/logout", async (req, res) => {
 });
 
 //////////Reset Password Routes
-// let verifiedEmail
+
 router.post("/forgetpassword", async (req, res) => {
   const useremail = req.body.email;
   console.log(useremail);
@@ -104,7 +103,7 @@ router.post("/forgetpassword", async (req, res) => {
 
 router.get("/reset-password/:id/:token", async (req, res, next) => {
   const { id, token } = req.params;
-  // console.log(token);
+
   let verifiedEmail = await User.findOne({ where: { id: id } });
   const { password, email, name } = verifiedEmail;
 
@@ -122,32 +121,31 @@ router.post("/reset-password/:id/:token", async (req, res, next) => {
   const { id, token } = req.params;
   const { userpassword, confirmPassword } = req.body;
   const user = await User.findOne({ where: { id: id } });
-  console.log(user.password)
-  console.log(userpassword,confirmPassword)
+  console.log(user.password);
+  console.log(userpassword, confirmPassword);
   if (userpassword !== confirmPassword) {
     return res.json({ msg: "Password Does not Match" });
   }
 
   const secret = privatekey + user.password;
-  
-  
+
   try {
     const payload = jwt.verify(token, secret);
     const salt = await bcrypt.genSaltSync(10, "a");
-    console.log(payload)
-    if (payload!==undefined) {
-      // user.password = bcrypt.hashSync(userpassword, salt);
-      await User.update({
-        password: bcrypt.hashSync(userpassword, salt),
-        
-      },
-      {
-        where: {
-          email: payload.email
+    console.log(payload);
+    if (payload !== undefined) {
+      await User.update(
+        {
+          password: bcrypt.hashSync(userpassword, salt),
+        },
+        {
+          where: {
+            email: payload.email,
+          },
         }
-      });
+      );
       res.send("password change succesfully");
-      console.log(user.password)
+      console.log(user.password);
     }
   } catch (error) {
     console.log(error);
