@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
           allowNull: false,
           unique: true,
         },
+        applicationId:{
+            type:DataTypes.STRING,
+            allowNull: false,
+        },
         fathername: {
           type: DataTypes.STRING,
           allowNull: false,

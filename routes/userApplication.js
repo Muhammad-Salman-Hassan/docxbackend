@@ -4,7 +4,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const auth = require("../middleware/auth");
-const { userApplicationController } = require("../controllers/userApplicationController");
+const { userApplicationController, allApplication, singleApplication } = require("../controllers/userApplicationController");
 
 // const imageFilter = (req, file, cb) => {
 //   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
@@ -31,5 +31,7 @@ const { userApplicationController } = require("../controllers/userApplicationCon
 // }); uploadFile.any("file")
 
 router.post("/application",auth ,userApplicationController);
+router.get("/allApplications",auth,allApplication)
+router.get("/application/:applicationId",auth,singleApplication)
 
 module.exports = router;
