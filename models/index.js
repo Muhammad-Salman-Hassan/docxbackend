@@ -38,6 +38,7 @@ db.Sequelize = Sequelize;
 
 db.user=require('./User')(sequelize,DataTypes)
 db.userProfile=require('./ProfileModel')(sequelize,DataTypes)
+db.userApplication=require("./Applications")(sequelize,DataTypes)
 
 
 db.user.hasOne(db.userProfile,{

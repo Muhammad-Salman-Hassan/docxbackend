@@ -17,7 +17,7 @@ app.use(cors(corsOptions))
 // ?????Router????????????
 const routes=require("./routes/routes")
 const profile=require('./routes/profile')
-
+const userApplication=require("./routes/userApplication")
 app.use(express.json())
 app.use(express.urlencoded())
 
@@ -26,6 +26,7 @@ app.use(express.urlencoded())
 
 app.use('/',routes)
 app.use('/',profile)
+app.use('/',userApplication)
 
   
 
