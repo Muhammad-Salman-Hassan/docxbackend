@@ -1,7 +1,9 @@
 const fs = require("fs");
 const db = require("../models");
 const { default: axios } = require("axios");
-const { generateUnique4DigitId } = require("../services/DefaultFunction");
+const { generateUnique4DigitId, generateRandomNumber } = require("../services/DefaultFunction");
+const statusEmail = require("../services/StatusEmail");
+const ApplicationsImage=db.ApplicationsImage
 
 const UserApplication = db.userApplication;
 let port = 3001;
@@ -29,7 +31,8 @@ const userApplicationController = async (req, res) => {
       phone,
     } = userData.UserProfile;
     let obj = {
-      applicationId,
+      applicationStatus: 0,
+      applicationId: id,
       fullname,
       fathername,
       rollno,
@@ -53,7 +56,9 @@ const userApplicationController = async (req, res) => {
 
 const allApplication = async (req, res) => {
   try {
-    let applications = await UserApplication.findAll();
+    let applications = await UserApplication.findAll({
+      include:ApplicationsImage
+    });
     res.json(applications);
   } catch (error) {
     console.log(error);
@@ -72,8 +77,50 @@ const singleApplication = async (req, res) => {
   }
 };
 
+const updateApplication = async (req, res) => {
+  try {
+    let application = req.body
+    UserApplication.update(application, { where: { applicationId: req.params.applicationId } }).then((response) => {
+      return res.send(`Application Updated. ${response}`);
+    });
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const updateStatus = async (req, res) => {
+  try {
+    let applicationId = req.body.applicationId
+    let applicationStatus = req.body.applicationStatus
+
+    console.log("update status", applicationId, applicationStatus)
+    let response = await UserApplication.update({ applicationStatus: applicationStatus ,reciptNumber:applicationStatus===1?generateRandomNumber(10):null}, { where: { applicationId } })
+    if (response[0] === 1) {
+      const { data } = await axios.get("http://localhost:3001/dashboard", {
+        headers: {
+          Cookie: `accessToken=${req.cookies.accessToken}`, // Add any required headers here
+        },
+
+      });
+      let name=data?.singleuser?.name
+      let email=data?.singleuser?.email
+      let status=applicationStatus
+      statusEmail(email,status,email)
+      
+      console.log(data.singleuser.email,data?.singleuser?.name, "user Response")
+    }
+    res.json({message:"Email is Bieng Send To User !"})
+    console.log(response, "response")
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 module.exports = {
   userApplicationController,
   allApplication,
   singleApplication,
+  updateApplication,
+  updateStatus
 };

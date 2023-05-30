@@ -39,15 +39,24 @@ db.Sequelize = Sequelize;
 db.user=require('./User')(sequelize,DataTypes)
 db.userProfile=require('./ProfileModel')(sequelize,DataTypes)
 db.userApplication=require("./Applications")(sequelize,DataTypes)
+db.ApplicationsImage=require("./ApplicationsImage")(sequelize,DataTypes)
 
 
 db.user.hasOne(db.userProfile,{
   foreignKey: 'user_id',
+})
+db.user.hasMany(db.ApplicationsImage,{
+  foreignKey: 'images_id',
 })
 
 db.userProfile.belongsTo(db.user, {
   foreignKey: 'user_id',
   as: 'userprofile'
 })
+db.ApplicationsImage.belongsTo(db.user, {
+  foreignKey: 'images_id',
+  // as: 'applicationsimage',
+  allowNull: false
+});
 
 module.exports = db;

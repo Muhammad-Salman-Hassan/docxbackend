@@ -1,5 +1,5 @@
 const express = require("express");
-const { profileController } = require("../controllers/profilecontroller");
+const { profileController, getImages } = require("../controllers/profileController");
 
 const router = express.Router();
 const multer = require("multer");
@@ -17,7 +17,6 @@ var storage = multer.diskStorage({
   destination: "uploads",
   filename: (req, file, cb) => {
     cb(null, `verification-${Date.now()}.${file.mimetype.split("/")[1]}`);
-    // console.log(file.mimetype);
   },
 });
 
@@ -30,5 +29,6 @@ var uploadFile = multer({
 });
 
 router.post("/profile", uploadFile.any("file"),auth ,profileController);
+router.get("/userImages", auth ,getImages);
 
 module.exports = router;

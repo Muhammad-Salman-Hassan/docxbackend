@@ -1,7 +1,6 @@
 const express = require("express");
-const { DataTypes } = require("sequelize");
+const { DataTypes, where } = require("sequelize");
 const { sequelize } = require("../models");
-
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const auth = require("../middleware/auth");
@@ -12,8 +11,10 @@ const sendEmail = require("../services/sendEmail");
 const crypto = require("crypto");
 const db = require("../models");
 const { json } = require("body-parser");
+const { default: axios } = require("axios");
 const User = db.user;
 const Profile = db.userProfile;
+const ApplicationsImage=db.ApplicationsImage
 
 var privatekey = "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX";
 
@@ -47,7 +48,7 @@ router.post("/login", async (req, res) => {
       return res.json({ error: "Invalid Credentials" });
     }
 
-    const accessToken = sign({ usercnic: user.cnic, id: user.id }, privatekey, {
+    const accessToken = sign({ usercnic: user.cnic, id: user.id,role:user.role }, privatekey, {
       expiresIn: "1d",
     });
 
@@ -171,11 +172,33 @@ router.get("/userprofile", auth, async (req, res) => {
   console.log(cnic);
 
   const users = await User.findOne({
-    include: Profile,
+    include: [{ model: Profile },
+    { model: ApplicationsImage }],
     where: { id: cnic.id },
   });
 
   res.json(users);
 });
+
+
+router.get("/allAdmin",async(req,res)=>{
+  const admins=await User.findAll({where:{role:['admin',"hod","library","superadmin"]}})
+  res.json(admins)
+})
+
+router.post("/createAdmin",async(req,res)=>{
+  let user=req?.body
+  console.log("USER",user)
+  try {
+    const {data } = await axios.post("http://localhost:3001/register",user, {
+      // headers: {
+      //   Cookie: `accessToken=${req.cookies.accessToken}`, // Add any required headers here
+      // },
+    });
+    res.json(data)
+  } catch (error) {
+    console.log(error)
+  }
+})
 
 module.exports = router;

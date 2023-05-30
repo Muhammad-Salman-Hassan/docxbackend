@@ -3,6 +3,7 @@ const db = require("../models");
 var multer = require("multer");
 const path = require("path");
 const jwt = require("jsonwebtoken");
+const User = db.user;
 const Profile = db.userProfile;
 let port=3001
 
@@ -64,7 +65,19 @@ const profileController = async (req, res) => {
     return res.json({msg:"Error when trying to complete your Profile",error});
   }
 };
+const getImages=async(req,res)=>{
+  let cnic = (req.id = req.user);
+  console.log(cnic);
+
+  const users = await User.findOne({
+    include: db.ApplicationsImage,
+    where: { id: cnic.id },
+  });
+
+  res.json(users);
+}
 
 module.exports = {
   profileController,
+  getImages
 };
