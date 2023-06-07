@@ -57,7 +57,7 @@ const profileController = async (req, res) => {
       user_id,
       imgurl:filePath
     };
-    Profile.create(obj).then((response) => {
+    await Profile.create(obj).then((response) => {
       return res.send(`Profile Created SuccesFully.`);
     });
   } catch (error) {

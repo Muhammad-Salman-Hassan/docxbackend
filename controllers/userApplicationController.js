@@ -56,9 +56,7 @@ const userApplicationController = async (req, res) => {
 
 const allApplication = async (req, res) => {
   try {
-    let applications = await UserApplication.findAll({
-      include:ApplicationsImage
-    });
+    let applications = await UserApplication.findAll();
     res.json(applications);
   } catch (error) {
     console.log(error);

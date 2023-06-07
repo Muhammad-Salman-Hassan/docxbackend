@@ -11,7 +11,7 @@ module.exports = async (request, response, next) => {
 
     request.token=token
 
-    console.log(token)
+    console.log("Token",token,request.cookies)
 
     //check if the token matches the supposed origin
     const decodedToken = await jwt.verify(token, "HadZrLuLUpmDcWjz5Vpc04LIopvOQsChok73LQqvs8UWapnH8j3rcHAlfpX");

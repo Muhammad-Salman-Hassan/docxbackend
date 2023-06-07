@@ -3,7 +3,7 @@ const express = require("express");
 
 const router = express.Router();
 const multer = require("multer");
-const auth = require("../middleware/auth");
+const auth=require("../middleware/auth")
 const { userApplicationController, allApplication, singleApplication, updateApplication, updateStatus } = require("../controllers/userApplicationController");
 const { verifyDocumentAccess } = require("../middleware/RolesMarking");
 

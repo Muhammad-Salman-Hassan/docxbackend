@@ -51,6 +51,7 @@ router.post("/login", async (req, res) => {
     const accessToken = sign({ usercnic: user.cnic, id: user.id,role:user.role }, privatekey, {
       expiresIn: "1d",
     });
+    console.log(user)
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
