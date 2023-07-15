@@ -6,6 +6,7 @@ const applicationImages = async (req, res) => {
     let file = req.files;
     // let {images_id}=req.body
     console.log(req.user.id,"Salman Hasan id")
+    console.log(file,"Salman Hasan id")
 
     global.__basedir = __dirname;
     try {

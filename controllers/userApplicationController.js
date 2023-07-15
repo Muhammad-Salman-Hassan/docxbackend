@@ -11,6 +11,8 @@ let port = 3001;
 const userApplicationController = async (req, res) => {
   console.log("USER Request", req.Cookie);
   let id = generateUnique4DigitId(); //4 digit unique id
+  let user_id=(req.id = req.user)
+  let app_id=user_id.id
   try {
     const userResponse = await axios.get("http://localhost:3001/dashboard", {
       headers: {
@@ -29,10 +31,14 @@ const userApplicationController = async (req, res) => {
       enrolmentno,
       libraryid,
       phone,
+      
     } = userData.UserProfile;
+
+    console.log("USERDATA",userData)
     let obj = {
       applicationStatus: 0,
       applicationId: id,
+      application_id:app_id,
       fullname,
       fathername,
       rollno,
@@ -41,8 +47,11 @@ const userApplicationController = async (req, res) => {
       enrolmentno,
       libraryid,
       phone,
+      cnic:userData.cnic
     };
-    UserApplication.create(obj).then((response) => {
+
+    console.log("OBJECT",obj)
+    await UserApplication.create(obj).then((response) => {
       return res.send(`Application Created.`);
     });
   } catch (error) {
@@ -56,7 +65,9 @@ const userApplicationController = async (req, res) => {
 
 const allApplication = async (req, res) => {
   try {
-    let applications = await UserApplication.findAll();
+    let applications = await UserApplication.findAll({
+      
+    });
     res.json(applications);
   } catch (error) {
     console.log(error);
@@ -66,10 +77,19 @@ const allApplication = async (req, res) => {
 const singleApplication = async (req, res) => {
   try {
     let applicationId = req.params.applicationId;
+    console.log(applicationId,"APPLICATIONID")
     let singleApplications = await UserApplication.findOne({
       where: { applicationId },
     });
-    res.json(singleApplications);
+
+    // console.log("SINGLE USER CNIC",singleApplications)
+    const userResponse = await axios.get(`http://localhost:3001/userprofile/${singleApplications?.cnic}`, {
+      headers: {
+        Cookie: `accessToken=${req.cookies.accessToken}`, // Add any required headers here
+      },
+    });
+    res.json({...singleApplications.dataValues,...userResponse.data});
+    console.log("userREsponse",userResponse)
   } catch (error) {
     console.log(error);
   }

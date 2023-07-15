@@ -8,7 +8,7 @@ const db=require("./models/index")
 
 const cors=require("cors");
 const corsOptions ={
-   origin:'https://muhammad-salman-hassan-automatic-umbrella-jw54944jp57fjw7-3000.preview.app.github.dev', 
+   origin:'http://localhost:3000', 
    credentials:true,            //access-control-allow-credentials:true
    optionSuccessStatus:200,
 }

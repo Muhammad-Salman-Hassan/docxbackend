@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      cnic:{
+        type:DataTypes.STRING,
+        allowNull:false
+      },
       fathername: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -37,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
        applicationStatus: {
         type: DataTypes.SMALLINT,
         allowNull: false,
-        unique: true,
+        unique: false,
         defaultValue: 0
       },
       reciptNumber:{

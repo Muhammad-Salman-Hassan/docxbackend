@@ -181,6 +181,19 @@ router.get("/userprofile", auth, async (req, res) => {
   res.json(users);
 });
 
+router.get("/userprofile/:cnic", auth, async (req, res) => {
+  let cnic = req.params.cnic
+  console.log("cnic",cnic);
+
+  const users = await User.findOne({
+    include: [{ model: Profile },
+    { model: ApplicationsImage }],
+    where: { cnic: cnic },
+  });
+
+  res.json(users);
+});
+
 
 router.get("/allAdmin",async(req,res)=>{
   const admins=await User.findAll({where:{role:['admin',"hod","library","superadmin"]}})
