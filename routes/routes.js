@@ -160,6 +160,7 @@ router.get("/dashboard", auth, async (req, res) => {
 
   const singleuser = await User.findOne({
     include: Profile,
+    
     where: {
       id: cnic.id,
     },
