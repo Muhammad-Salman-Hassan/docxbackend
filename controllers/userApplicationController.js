@@ -130,7 +130,7 @@ const updateStatus = async (req, res) => {
     let applicationStatus = req.body.applicationStatus
 
     console.log("update status", applicationId, applicationStatus)
-    let response = await UserApplication.update({ applicationStatus: applicationStatus, reciptNumber: applicationStatus === 1 ? generateRandomNumber(10) : null }, { where: { applicationId } })
+    let response = await UserApplication.update({ applicationStatus: applicationStatus.toString(), reciptNumber: applicationStatus === 1 ? generateRandomNumber(10) : null }, { where: { applicationId } })
     if (response[0] === 1) {
       const { data } = await axios.get("http://localhost:3001/dashboard", {
         headers: {

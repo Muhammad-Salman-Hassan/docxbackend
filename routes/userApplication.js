@@ -13,6 +13,6 @@ router.get("/allApplications",auth,allApplication)
 router.get("/application/:applicationId",auth,singleApplication)
 router.put("/updateApplication/:applicationId",auth,updateApplication)
 router.get("/status",auth,GetStatus)
-router.put("/updateStatus",verifyDocumentAccess,updateStatus)
+router.put("/updateStatus",updateStatus)
 
 module.exports = router;
